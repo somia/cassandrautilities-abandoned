@@ -1,0 +1,1 @@
+Cassandra helper class that encapsulates all thrift api calls and adds good failover, exception handling, backpressure handling and node failure logic to make the api as fault tolerant as possible. It also provides easy and extendable way to log data cassandra operations. This includes both performance tracking and error logging.
