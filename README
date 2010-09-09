@@ -1,1 +1,23 @@
 Cassandra helper class that encapsulates all thrift api calls and adds good failover, exception handling, backpressure handling and node failure logic to make the api as fault tolerant as possible. It also provides easy and extendable way to log data cassandra operations. This includes both performance tracking and error logging.
+
+Beside the wrapped api calls which enchange exception handling and fail safe, the class has some static helper methods to ease some of the thrift structure creation. Here's an example how to execute a mutation into a super column family.
+
+// Get microsecond timestamp as a 64 bit integer 
+$timestamp = Cassandra::get_microtimestamp();
+ 
+$mutation = array();
+$mutation[$this->uid]['BlogEntries'][] =
+  Cassandra::mutation(
+    Cassandra::column_or_super_column(
+      Cassandra::super_column(Cassandra::pack_longtype($this->id), // Column names are LongType
+        Cassandra::column('content', $utf8_content, $timestamp),
+        Cassandra::column('topic', $topic, $timestamp),
+        Cassandra::column('uid', $this->uid, $timestamp),
+        Cassandra::column('status', $this->status, $timestamp),
+        Cassandra::column('stamp', $this->stamp, $timestamp)
+      )
+    )
+  );
+ 
+Cassandra::get_instance()->batch_mutate($mutation);
+
