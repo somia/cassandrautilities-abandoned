@@ -317,7 +317,7 @@ class CassandraWrapper {
 				$this->build_usable_hosts();
 
 				$this->socket = new TSocketPool($this->hosts, $this->ports, false);
-				$this->socket->setDebug(true);
+				$this->socket->setDebug(false);
 				$this->socket->setRandomize(false);
 				$this->socket->setSendTimeout(1000);
 				$this->socket->setRecvTimeout(1000);
@@ -708,11 +708,15 @@ class CassandraWrapper {
 	 * Returns a cassandra_Column with name, value and timestamp set from the parameters.
 	 * Timestamp is Cassandra::get_microtimestamp() if it's null.
 	 * @return cassandra_Column
+	 * @throws Exception if value was null.
 	 */
 	public static function column($name, $value, $timestamp = null) {
 		$column = new cassandra_Column();
 		$column->name = $name;
 		$column->value = $value;
+		if ($value === null) {
+			throw new Exception("Value can't be null ($value) for column named $name");
+		}
 		if ($timestamp == null) {
 			$timestamp = Cassandra::get_microtimestamp();
 		}
