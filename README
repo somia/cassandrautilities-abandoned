@@ -18,6 +18,8 @@ $mutation[$this->uid]['BlogEntries'][] =
       )
     )
   );
- 
+
+// Execute the operation. In case the first node fails with the command
+// the operation is automaticly executed into another server 
 Cassandra::get_instance()->batch_mutate($mutation);
 
